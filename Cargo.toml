@@ -1,6 +1,13 @@
 [workspace]
 resolver = "2"
-members = [
-	"./client",
-	"./server"
-]
+members = ["./client", "./server", "stream_message"]
+
+[workspace.package]
+edition = "2024"
+version = "0.1.0"
+
+[workspace.dependencies]
+serde = "1.0.228"
+serde_json = "1.0.149"
+thiserror = "2.0.17"
+stream_message = { path = "./stream_message", version = "0.1.0" }
