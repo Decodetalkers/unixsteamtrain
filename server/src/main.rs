@@ -13,6 +13,7 @@ fn handle_client(mut stream: UnixStream) {
 }
 
 fn main() {
+    let _ = std::fs::remove_file("./server.sock");
     let listener = UnixListener::bind("./server.sock").unwrap();
     let mut threads = vec![];
     for stream in listener.incoming() {
