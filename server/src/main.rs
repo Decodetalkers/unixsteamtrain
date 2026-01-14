@@ -1,14 +1,14 @@
 use std::os::unix::net::{UnixListener, UnixStream};
 use std::thread;
-use stream_message::{Request, Response, SyncCodec};
+use stream_message::{Message, Request, Response};
 
 fn handle_client(mut stream: UnixStream) {
     loop {
-        let Ok(Request::Remote { monitors }) = Request::read_from(&mut stream) else {
+        let Ok(Request::Remote { monitors }) = stream.read_msg() else {
             continue;
         };
         println!("monitors: {monitors:?}");
-        let _ = Response::Success { index: 1 }.write_to(&mut stream);
+        let _ = stream.write_msg(&Response::Success { index: 1 });
     }
 }
 

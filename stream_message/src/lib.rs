@@ -2,6 +2,7 @@ pub mod error;
 use std::io::{Read, Write};
 
 use error::Error;
+use std::os::unix::net::UnixStream;
 
 use serde::{Deserialize, Serialize};
 
@@ -10,6 +11,28 @@ pub trait SyncCodec {
     where
         Self: std::marker::Sized;
     fn write_to<T: Write>(&self, stream: &mut T) -> Result<(), Error>;
+}
+
+pub trait Message<T>
+where
+    T: SyncCodec,
+{
+    fn read_msg(&mut self) -> Result<T, Error>
+    where
+        T: std::marker::Sized;
+    fn write_msg(&mut self, message: &T) -> Result<(), Error>;
+}
+
+impl<T: SyncCodec> Message<T> for UnixStream {
+    fn read_msg(&mut self) -> Result<T, Error>
+    where
+        T: std::marker::Sized,
+    {
+        T::read_from(self)
+    }
+    fn write_msg(&mut self, message: &T) -> Result<(), Error> {
+        message.write_to(self)
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize)]

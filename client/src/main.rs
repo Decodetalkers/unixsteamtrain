@@ -1,13 +1,14 @@
 use std::os::unix::net::UnixStream;
-use stream_message::{Request, Response, SyncCodec};
+use stream_message::{Message, Request, Response};
 
 fn main() {
     let mut stream = UnixStream::connect("server.sock").unwrap();
-    Request::Remote {
-        monitors: vec!["a".to_owned(), "b".to_owned()],
-    }
-    .write_to(&mut stream)
-    .unwrap();
-    let request = Response::read_from(&mut stream).unwrap();
+    stream
+        .write_msg(&Request::Remote {
+            monitors: vec!["a".to_owned(), "b".to_owned()],
+        })
+        .unwrap();
+
+    let request: Response = stream.read_msg().unwrap();
     println!("request = {request:?}");
 }
