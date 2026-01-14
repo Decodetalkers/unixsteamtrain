@@ -20,7 +20,7 @@ where
     fn read_msg(&mut self) -> Result<T, Error>
     where
         T: std::marker::Sized;
-    fn write_msg(&mut self, message: &T) -> Result<(), Error>;
+    fn write_msg(&mut self, message: T) -> Result<(), Error>;
 }
 
 impl<T: SyncCodec> Message<T> for UnixStream {
@@ -30,7 +30,7 @@ impl<T: SyncCodec> Message<T> for UnixStream {
     {
         T::read_from(self)
     }
-    fn write_msg(&mut self, message: &T) -> Result<(), Error> {
+    fn write_msg(&mut self, message: T) -> Result<(), Error> {
         message.write_to(self)
     }
 }
